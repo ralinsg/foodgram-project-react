@@ -135,7 +135,7 @@ class Subscribe(CreatedModel):
         unique_together = ['user', 'author']
 
 
-class ShoppingСart(CreatedModel):
+class ShoppingCart(CreatedModel):
     user = models.OneToOneField(
         User,
         related_name='shopping_cart',

@@ -3,7 +3,7 @@ from recipes.models import Ingredient
 
 
 class IngredientFilter(filters.FilterSet):
-    """Добавляет возможность поиска.
+    """Добавляет возможность поиска по ингредиентам.
     Поиск частичному вхождению в начале названия ингредиента.
     """
     name = filters.CharFilter(lookup_expr='istartswith')

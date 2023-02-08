@@ -1,6 +1,6 @@
 from django.contrib import admin
 from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
-                            RecipeIngredient, ShoppingСart, Subscribe, Tag)
+                            RecipeIngredient, ShoppingCart, Subscribe, Tag)
 
 EMPTY = 'пусто'
 
@@ -63,7 +63,7 @@ class SubscribeAdmin(admin.ModelAdmin):
     empty_value_display = EMPTY
 
 
-@admin.register(ShoppingСart)
+@admin.register(ShoppingCart)
 class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = (
         'id',

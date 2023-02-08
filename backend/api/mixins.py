@@ -1,7 +1,5 @@
 from rest_framework import mixins, viewsets
-from django.views.generic import DetailView
-from recipes.models import Recipe
-from django.shortcuts import get_object_or_404
+
 
 class ListRetrieveViewSet(
     mixins.ListModelMixin,
@@ -22,5 +20,19 @@ class CreateListDestroyViewSet(
     """Создает объект.
     Возвращает список объектов.
     Удаляет объект.
+    """
+    pass
+
+class CreateListDestroyRetrieveViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet
+):
+    """Создает объект.
+    Возвращает список объектов.
+    Удаляет объект.
+    Возвращает объект.
     """
     pass
