@@ -1,7 +1,7 @@
 from io import BytesIO
 
-from api.filters import IngredientFilter
-from api.mixins import (CreateListDestroyRetrieveViewSet,
+from core.filters import IngredientFilter
+from core.mixins import (CreateListDestroyRetrieveViewSet,
                         CreateListDestroyViewSet, ListRetrieveViewSet)
 from api.serializers import (IngredientSerializer, RecipeReadSerializer,
                              RecipeWriteSerializer, ShoppingСartSerializer,
@@ -9,7 +9,7 @@ from api.serializers import (IngredientSerializer, RecipeReadSerializer,
                              TagSerializer, TokenSerializer,
                              UserCreateSerializer, UserListSerializer,
                              UserPasswordSerializer)
-from api.permissions import IsAdminOrReadOnly
+from core.permissions import IsAdminOrReadOnly
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.db.models import Exists, OuterRef, Value
@@ -112,7 +112,7 @@ def set_password(request):
             {'message': 'Пароль успешно изменен!'},
             status=status.HTTP_201_CREATED)
     return Response(
-        {'error': 'Проверте вводимые данные!'},
+        {'error': 'Проверьте вводимые данные!'},
         status=status.HTTP_400_BAD_REQUEST)
 
 
