@@ -1,14 +1,14 @@
 from io import BytesIO
 
-from core.filters import IngredientFilter
-from core.mixins import (CreateListDestroyRetrieveViewSet,
-                        CreateListDestroyViewSet, ListRetrieveViewSet)
 from api.serializers import (IngredientSerializer, RecipeReadSerializer,
                              RecipeWriteSerializer, ShoppingСartSerializer,
                              SubscribeRecipeSerializer, SubscribeSerializer,
                              TagSerializer, TokenSerializer,
                              UserCreateSerializer, UserListSerializer,
                              UserPasswordSerializer)
+from core.filters import IngredientFilter
+from core.mixins import (CreateListDestroyRetrieveViewSet,
+                         CreateListDestroyViewSet, ListRetrieveViewSet)
 from core.permissions import IsAdminOrReadOnly
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
@@ -16,10 +16,9 @@ from django.db.models import Exists, OuterRef, Value
 from django.db.models.aggregates import Count, Sum
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
+from djoser.views import UserViewSet
 from recipes.models import (FavoriteRecipe, Ingredient, Recipe, ShoppingCart,
                             Subscribe, Tag)
-from users.models import User
-from djoser.views import UserViewSet
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
@@ -27,11 +26,10 @@ from rest_framework import status, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action, api_view
-from rest_framework.permissions import (AllowAny,
-                                        IsAuthenticated,
+from rest_framework.permissions import (AllowAny, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
-
+from users.models import User
 
 User = get_user_model()
 
