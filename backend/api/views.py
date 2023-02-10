@@ -30,12 +30,13 @@ from rest_framework.permissions import (AllowAny, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from users.models import User
+from rest_framework import permissions
 
 User = get_user_model()
 
 
 DOCUMENT = 'shoppingcart.pdf'
-SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS']
+
 
 class UsersViewSet(UserViewSet):
     """Получение списка пользователей
@@ -242,7 +243,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_serializer_class(self):
-        if self.request.method in SAFE_METHODS:
+        if self.request.method in permissions.SAFE_METHODS:
             return RecipeReadSerializer
         return RecipeWriteSerializer
 

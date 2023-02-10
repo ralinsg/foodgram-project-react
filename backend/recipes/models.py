@@ -1,10 +1,11 @@
 from core.models import CreatedModel
 from django.contrib.auth import get_user_model
-from django.core import validators
 from django.db import models
-
+from core.validators import validate_min
+from django.core import validators
 User = get_user_model()
 
+#Сортировка полей модели реализована в CreatedModel
 
 class Tag(CreatedModel):
     name = models.CharField(
@@ -17,7 +18,13 @@ class Tag(CreatedModel):
     color = models.CharField(
         max_length=7,
         verbose_name='Цвет',
-        help_text='Цвет в HEX'
+        help_text='Цвет в HEX',
+        validators=[
+            validators.RegexValidator(
+                regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
+                message='Введенное значение не является цветом в формате HEX!'
+            )
+        ]
     )
     slug = models.SlugField(
         verbose_name='Cсылка',
@@ -95,7 +102,8 @@ class Recipe(CreatedModel):
     )
     cooking_time = models.PositiveIntegerField(
         verbose_name='Время приготовления (в минутах)',
-        help_text='Не может быть меньше 1 минуты'
+        help_text='Не может быть меньше 1 минуты',
+        validators=[validate_min]
     )
     slug = models.SlugField(
         verbose_name='Cсылка',
@@ -192,18 +200,11 @@ class RecipeIngredient(CreatedModel):
         on_delete=models.CASCADE
     )
 
-    amount = models.PositiveIntegerField(
+    amount = models.PositiveSmallIntegerField(
         default=1,
-        verbose_name='Количество',
-        validators=(
-        validators.MinValueValidator(
-        1, message='Минимальное количество не может быть меньше 1'),
-        )
+        validators=[validate_min]
     )
 
     class Meta:
         verbose_name = 'Количество ингредиента'
         verbose_name_plural = 'Количество ингредиентов'
-
-    def __str__(self):
-        return self.name

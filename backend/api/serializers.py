@@ -6,6 +6,8 @@ from drf_base64.fields import Base64ImageField
 from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
                             RecipeIngredient, ShoppingCart, Subscribe, Tag)
 from rest_framework import serializers
+
+from core.validators import validate_min
 User = get_user_model()
 ERROR_MESSAGE = 'Не удается войти в систему с текущими данными'
 
@@ -268,8 +270,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
     def validate_cooking_time(self, cooking_time):
         if int(cooking_time) < 1:
-            raise serializers.ValidationError(
-                'Время приготовления >= 1!')
+            raise validate_min
         return cooking_time
 
     def validate_ingredients(self, ingredients):
@@ -283,11 +284,13 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         return ingredients
 
     def create_ingredients(self, ingredients, recipe):
-        for ingredient in ingredients:
-            RecipeIngredient.objects.create(
-                recipe=recipe,
-                ingredient_id=ingredient.get('id'),
-                amount=ingredient.get('amount'), )
+        RecipeIngredient.objects.bulk_create(
+            [RecipeIngredient(
+            recipe=recipe,
+            ingredient_id=ingredient.get('id'),
+            amount=ingredient.get('amount'))
+            for ingredient in ingredients]
+        )
 
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
