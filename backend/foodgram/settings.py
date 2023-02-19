@@ -13,12 +13,10 @@ SECRET_KEY = os.getenv(
     default='!ka(bng=1(nf7)ex5x8@f(^0@mld%3-aa7wc&s^mby4z8m8n89',
 )
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', default='True') == 'True'
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-]
+ALLOWED_HOSTS = os.environ.get(
+    'ALLOWED_HOSTS', default='localhost').split(', ')
 
 
 INSTALLED_APPS = [
@@ -28,8 +26,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
     'djoser',
+    'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
     'core.apps.CoreConfig',
@@ -105,7 +103,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 
 STATIC_URL = '/static/'
@@ -118,14 +116,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'core.pagination.CustomPagination',
     'PAGE_SIZE': 6,

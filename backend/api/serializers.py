@@ -84,16 +84,35 @@ class TokenSerializer(serializers.Serializer):
 
     email = serializers.CharField(
         label='Email',
-        write_only=True
-    )
+        write_only=True)
     password = serializers.CharField(
         label='Пароль',
-        write_only=True
-    )
+        style={'input_type': 'password'},
+        trim_whitespace=False,
+        write_only=True)
     token = serializers.CharField(
         label='Токен',
-        read_only=True
-    )
+        read_only=True)
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password')
+        if email and password:
+            user = authenticate(
+                request=self.context.get('request'),
+                email=email,
+                password=password)
+            if not user:
+                raise serializers.ValidationError(
+                    ERROR_MESSAGE,
+                    code='authorization')
+        else:
+            ERROR_MESSAGE = 'Необходимо указать "адрес электронной почты" и "пароль".'
+            raise serializers.ValidationError(
+                ERROR_MESSAGE,
+                code='authorization')
+        attrs['user'] = user
+        return attrs
 
 
 class SubscribeRecipeSerializer(serializers.ModelSerializer):
