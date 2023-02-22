@@ -1,8 +1,9 @@
 version: '3.8'
-
 services:
+
   db:
-    image: postgres:13.0-alpine
+    image: postgres:14.6-alpine
+    restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
@@ -10,6 +11,7 @@ services:
 
   backend:
     image: ralinsg/foodgram_backend:latest
+    restart: always
     volumes:
       - data_value:/code/data/
       - static_value:/code/static/
@@ -30,7 +32,7 @@ services:
     image: nginx:1.19.3
     restart: always
     ports:
-      - "80:80"
+      - 80:80
     volumes:
       - ./default.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/

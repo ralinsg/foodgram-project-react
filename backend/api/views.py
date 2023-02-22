@@ -22,9 +22,9 @@ from recipes.models import (FavoriteRecipe, Ingredient, Recipe, ShoppingCart,
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from rest_framework import status, viewsets
-from rest_framework.authtoken.models import Token
+from rest_framework import status, viewsets, generics
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action, api_view
 from rest_framework.permissions import (AllowAny, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
@@ -36,6 +36,39 @@ User = get_user_model()
 
 
 DOCUMENT = 'shoppingcart.pdf'
+
+
+class AuthToken(ObtainAuthToken):
+    """Авторизация пользователя."""
+
+    serializer_class = TokenSerializer
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response(
+            {'auth_token': token.key},
+            status=status.HTTP_201_CREATED)
+
+
+@api_view(['post'])
+def set_password(request):
+    """Функция для изменение пароля."""
+
+    serializer = UserPasswordSerializer(
+        data=request.data,
+        context={'request': request})
+    if serializer.is_valid():
+        serializer.save()
+        return Response(
+            {'message': 'Пароль успешно изменен!'},
+            status=status.HTTP_201_CREATED)
+    return Response(
+        {'error': 'Проверьте вводимые данные!'},
+        status=status.HTTP_400_BAD_REQUEST)
 
 
 class UsersViewSet(UserViewSet):
@@ -82,40 +115,9 @@ class UsersViewSet(UserViewSet):
         return self.get_paginated_response(serializer.data)
 
 
-class AuthToken(ObtainAuthToken):
-    """Авторизация пользователя."""
-
-    serializer_class = TokenSerializer
-    permission_classes = (AllowAny,)
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return Response(
-            {'auth_token': token.key},
-            status=status.HTTP_201_CREATED)
-
-
-@api_view(['post'])
-def set_password(request):
-    """Функция для изменение пароля."""
-
-    serializer = UserPasswordSerializer(
-        data=request.data,
-        context={'request': request})
-    if serializer.is_valid():
-        serializer.save()
-        return Response(
-            {'message': 'Пароль успешно изменен!'},
-            status=status.HTTP_201_CREATED)
-    return Response(
-        {'error': 'Проверьте вводимые данные!'},
-        status=status.HTTP_400_BAD_REQUEST)
-
-
-class SubscribeViewSet(CreateListDestroyRetrieveViewSet):
+class SubscribeViewSet(
+        generics.RetrieveDestroyAPIView,
+        generics.ListCreateAPIView):
     """Подписывается на пользователей
     Отписывается от пользователей.
     """
@@ -179,7 +181,9 @@ class IngredientViewSet(ListRetrieveViewSet):
     permission_classes = (IsAdminOrReadOnly,)
 
 
-class FavoriteRecipeViewSet(CreateListDestroyViewSet):
+class FavoriteRecipeViewSet(
+        generics.RetrieveDestroyAPIView,
+        generics.ListCreateAPIView):
     """Вьюсет для избранных рецептов:
     Добавления рецепт в избранное.
     Удалить рецепт из избранного.
@@ -204,7 +208,9 @@ class FavoriteRecipeViewSet(CreateListDestroyViewSet):
         self.request.user.favorite_recipe.recipe.remove(instance)
 
 
-class ShoppingCartViewSet(ListRetrieveViewSet):
+class ShoppingCartViewSet(
+        generics.RetrieveDestroyAPIView,
+        generics.ListCreateAPIView):
     """Вьюсет для списка покупок:
     Скачать список покупок.
     Добавления рецепт в список покупок.

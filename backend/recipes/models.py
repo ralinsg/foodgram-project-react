@@ -1,11 +1,13 @@
 from core.models import CreatedModel
-from django.contrib.auth import get_user_model
-from django.db import models
 from core.validators import validate_min
+from django.contrib.auth import get_user_model
 from django.core import validators
-User = get_user_model()
+from django.db import models
 
-#Сортировка полей модели реализована в CreatedModel
+User = get_user_model()
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 
 class Tag(CreatedModel):
     name = models.CharField(
@@ -164,6 +166,12 @@ class ShoppingCart(CreatedModel):
     def __str__(self):
         return self.recipe
 
+    @receiver(post_save, sender=User)
+    def create_shopping_cart(
+            sender, instance, created, **kwargs):
+        if created:
+            return ShoppingCart.objects.create(user=instance)
+
 
 class FavoriteRecipe(CreatedModel):
     user = models.OneToOneField(
@@ -186,6 +194,12 @@ class FavoriteRecipe(CreatedModel):
     def __str__(self):
         list_ = [item['name'] for item in self.recipe.values('name')]
         return f'Пользователь {self.user} добавил {list_} в избранные.'
+
+    @receiver(post_save, sender=User)
+    def create_favorite_recipe(
+            sender, instance, created, **kwargs):
+        if created:
+            return FavoriteRecipe.objects.create(user=instance)
 
 
 class RecipeIngredient(CreatedModel):
