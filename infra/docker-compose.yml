@@ -10,7 +10,7 @@ services:
       - ./.env
 
   backend:
-    image: ralinsg/foodgram_backend:latest
+    image: ralinsg/foodgram_backend:v0.1
     restart: always
     volumes:
       - data_value:/code/data/
@@ -22,7 +22,7 @@ services:
       - ./.env
 
   frontend:
-    image: ralinsg/foodgram_frontend:latest
+    image: ralinsg/foodgram_frontend:v0.1
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:

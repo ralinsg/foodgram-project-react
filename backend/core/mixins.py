@@ -1,38 +1,24 @@
-from rest_framework import mixins, viewsets
+from core.permissions import IsAdminOrReadOnly
+from rest_framework import generics
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
+class PermissionAndPaginationMixin:
+    """Возвращает список тегов и ингридиентов."""
 
-class ListRetrieveViewSet(
-    mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet
-):
-    """Возвращает список объектов.
-    Возвращает объект.
-    """
+    permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = None
+
+class RetrieveDestroyListCreate(
+        generics.RetrieveDestroyAPIView,
+        generics.ListCreateAPIView):
+
     pass
 
-class CreateListDestroyViewSet(
-    mixins.CreateModelMixin,
-    mixins.ListModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet
-):
-    """Создает объект.
-    Возвращает список объектов.
-    Удаляет объект.
-    """
-    pass
+class GetIsSubscribedMixin:
 
-class CreateListDestroyRetrieveViewSet(
-    mixins.CreateModelMixin,
-    mixins.ListModelMixin,
-    mixins.DestroyModelMixin,
-    mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet
-):
-    """Создает объект.
-    Возвращает список объектов.
-    Удаляет объект.
-    Возвращает объект.
-    """
-    pass
+    def get_is_subscribed(self, obj):
+        user = self.context['request'].user
+        if not user.is_authenticated:
+            return False
+        return user.follower.filter(author=obj).exists()

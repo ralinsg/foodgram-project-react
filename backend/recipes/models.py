@@ -3,10 +3,10 @@ from core.validators import validate_min
 from django.contrib.auth import get_user_model
 from django.core import validators
 from django.db import models
-
-User = get_user_model()
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
+User = get_user_model()
 
 
 class Tag(CreatedModel):
@@ -14,19 +14,13 @@ class Tag(CreatedModel):
         max_length=200,
         verbose_name='Название',
         help_text='Максимум 200 символов',
-        db_index=True,
         unique=True
     )
     color = models.CharField(
         max_length=7,
         verbose_name='Цвет',
         help_text='Цвет в HEX',
-        validators=[
-            validators.RegexValidator(
-                regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
-                message='Введенное значение не является цветом в формате HEX!'
-            )
-        ]
+        unique=True
     )
     slug = models.SlugField(
         verbose_name='Cсылка',
@@ -46,8 +40,7 @@ class Ingredient(CreatedModel):
     name = models.CharField(
         max_length=200,
         verbose_name='Название',
-        help_text='Максимум 200 символов',
-        db_index=True
+        help_text='Максимум 200 символов'
     )
     measurement_unit = models.CharField(
         max_length=200,
@@ -70,24 +63,6 @@ class Recipe(CreatedModel):
         related_name='recipe',
         verbose_name='Автор'
     )
-    tags = models.ManyToManyField(
-        Tag,
-        related_name='recipes',
-        verbose_name='Теги'
-    )
-    ingredients = models.ManyToManyField(
-        Ingredient,
-        verbose_name='Список ингредиентов',
-        through='RecipeIngredient'
-    )
-    is_favorited = models.BooleanField(
-        blank=True,
-        verbose_name='Находится ли в избранном'
-    )
-    is_in_shopping_cart = models.BooleanField(
-        blank=True,
-        verbose_name='Находится ли в корзине'
-    )
     name = models.CharField(
         max_length=200,
         verbose_name='Название',
@@ -102,21 +77,26 @@ class Recipe(CreatedModel):
     text = models.TextField(
         verbose_name='Описание'
     )
-    cooking_time = models.PositiveIntegerField(
-        verbose_name='Время приготовления (в минутах)',
-        help_text='Не может быть меньше 1 минуты',
-        validators=[validate_min]
+    ingredients = models.ManyToManyField(
+        Ingredient,
+        verbose_name='Список ингредиентов',
+        through='RecipeIngredient'
     )
-    slug = models.SlugField(
-        verbose_name='Cсылка',
-        max_length=100,
-        unique=True
+    tags = models.ManyToManyField(
+        Tag,
+        related_name='recipes',
+        verbose_name='Теги'
+    )
+    cooking_time = models.PositiveSmallIntegerField(
+        verbose_name='Время приготовления в минутах',
+        validators=[validators.MinValueValidator(
+            1, message='Мин. время приготовления 1 минута'), ]
     )
 
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
-        ordering = ['-pub_date']
+        ordering = ('-pub_date', )
 
     def __str__(self):
         return self.name
@@ -213,7 +193,6 @@ class RecipeIngredient(CreatedModel):
         related_name='ingredient',
         on_delete=models.CASCADE
     )
-
     amount = models.PositiveSmallIntegerField(
         default=1,
         validators=[validate_min]
@@ -222,3 +201,7 @@ class RecipeIngredient(CreatedModel):
     class Meta:
         verbose_name = 'Количество ингредиента'
         verbose_name_plural = 'Количество ингредиентов'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique ingredient')]
