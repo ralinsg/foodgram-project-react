@@ -241,7 +241,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         methods=['get'],
         permission_classes=(IsAuthenticated,))
     def download_shopping_cart(self, request):
-        """Качаем список с ингредиентами."""
+        """ Функция для скачивания."""
 
         buffer = io.BytesIO()
         page = canvas.Canvas(buffer)

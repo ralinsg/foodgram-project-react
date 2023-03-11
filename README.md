@@ -4,6 +4,10 @@
 Продуктовый помощник, в котором пользователи могут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
 
 
+## Для проверки:
+e-mail admin@admin.ru
+пароль admin
+
 
 ## Технологический стек:
 
@@ -148,7 +152,7 @@ docker build -t USERNAME/foodgram_backend:v0.1 .
 ```
 Загрузить образ backend на Docker Hub:
 ```bash
-docker push -t USERNAME/foodgram_backend:v0.1
+docker push USERNAME/foodgram_backend:v0.1
 ```
 Создаем локально docker образы, в директории frontend выполнить команду:
 ```bash
@@ -156,7 +160,7 @@ docker build -t USERNAME/foodgram_frontend:v0.1 .
 ```
 Загрузить образ frontend на Docker Hub:
 ```bash
-docker push -t USERNAME/foodgram_frontend:v0.1
+docker push USERNAME/foodgram_frontend:v0.1
 ```
 Локально перенести файлы docker-compose.yml и default.conf на сервер:
  ```bash
@@ -211,6 +215,7 @@ sudo docker-compose stop
 ```bash
 sudo docker-compose down -v
 ```
+
 
 ## Автор
 
