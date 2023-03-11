@@ -6,8 +6,10 @@
 
 ## Для проверки:
 e-mail admin@admin.ru
+
 пароль admin
 
+http://51.250.91.194/
 
 ## Технологический стек:
 
@@ -21,8 +23,6 @@ e-mail admin@admin.ru
 - Docker
 - Docker Hub
 - Yandex.Cloud
-
-
 
 
 ## Установка и запуск проекта локально на Windows:
