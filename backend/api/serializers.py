@@ -6,10 +6,12 @@ from drf_base64.fields import Base64ImageField
 from recipes.models import (Ingredient, Recipe,
                             RecipeIngredient, Subscribe, Tag)
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from core.validators import validate_min
 User = get_user_model()
 ERROR_MESSAGE = 'Не удается войти в систему с текущими данными'
 from core.mixins import GetIsSubscribedMixin
+
 
 
 class TokenSerializer(serializers.Serializer):
@@ -226,9 +228,15 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Мин. 1 ингредиент в рецепте!')
         for ingredient in ingredients:
-            if int(ingredient.get('amount')) < 1:
-                raise serializers.ValidationError(
-                    'Количество ингредиента >= 1!')
+            if int(ingredient['amount']) <= 0:
+                raise ValidationError(
+                    'Количество ингредиента должно быть больше нуля.'
+                )
+            elif int(ingredient['amount']) >= 1000:
+                raise ValidationError(
+                    'Проверьте вводимое количество ингредиента'
+                )
+
         return ingredients
 
     def create_ingredients(self, ingredients, recipe):
