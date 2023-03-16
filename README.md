@@ -65,11 +65,11 @@ DEBUG = False
 
 В директории backend создаем docker образ:
 ```bash
-docker build -t USERNAME/foodgram_backend:v0.1 .
+docker build -t USERNAME/foodgram_back:v0.1 .
 ```
 В директории frontend создаем docker образ:
 ```bash
-docker build -t USERNAME/foodgram_frontend:v0.1 .
+docker build -t USERNAME/foodgram_front:v0.1 .
 ```
 В директории infra запускаем docker-compose файл:
 ```bash
@@ -148,19 +148,19 @@ docker login -u USERNAME
 ```
 Создаем локально docker образы, в директории backend выполнить команду:
 ```bash
-docker build -t USERNAME/foodgram_backend:v0.1 .
+docker build -t USERNAME/foodgram_back:v0.1 .
 ```
 Загрузить образ backend на Docker Hub:
 ```bash
-docker push USERNAME/foodgram_backend:v0.1
+docker push USERNAME/foodgram_back:v0.1
 ```
 Создаем локально docker образы, в директории frontend выполнить команду:
 ```bash
-docker build -t USERNAME/foodgram_frontend:v0.1 .
+docker build -t USERNAME/foodgram_front:v0.1 .
 ```
 Загрузить образ frontend на Docker Hub:
 ```bash
-docker push USERNAME/foodgram_frontend:v0.1
+docker push USERNAME/foodgram_front:v0.1
 ```
 Локально перенести файлы docker-compose.yml и default.conf на сервер:
  ```bash
